@@ -31,6 +31,11 @@ const favoriteSchema = new mongoose.Schema(
           type: Decimal128,
           required: true,
           trim: true
+        },
+        img_link: {
+          type: string,
+          required: true,
+          trim: true
         }
       }
     ]
