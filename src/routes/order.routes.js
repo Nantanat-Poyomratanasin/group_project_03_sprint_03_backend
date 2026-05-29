@@ -3,12 +3,14 @@ import { Router } from 'express';
 import {
   getAllOrders,
   getMyOrders,
+  getOrderById,
   createOrder,
   updateOrderStatus,
   deleteOrder
 } from '../modules/orders/order.controllers.js';
 
-import { authUser } from '../../middlewares/auth.js';
+import { authUser } from '../middlewares/auth.js';
+import { authorizeAdmin } from '../middlewares/author.js';
 
 export const router = Router();
 

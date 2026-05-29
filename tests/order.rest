@@ -1,0 +1,42 @@
+### Get all orders
+GET http://localhost:3000/api/orders
+
+### Create order
+POST http://localhost:3000/api/orders
+Content-Type: application/json
+
+{
+  "user_id": "685abc123456789012345678",
+  "total_amount": 599,
+  "status": "pending",
+  "order_item": [
+    {
+      "book_id": "685abc123456789012345679",
+      "book_name": "Atomic Habits",
+      "author": "James Clear",
+      "quantity": 1,
+      "price": 599,
+      "img_link": "https://example.com/book.jpg"
+    }
+  ]
+}
+
+### Login
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "email": "อีเมลที่มีอยู่ใน MongoDB",
+  "password": "รหัสผ่าน"
+}
+
+### Create User
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "ploy",
+  "email": "ploy@test.com",
+  "password": "password123",
+  "fullName": "Ploy Yah"
+}
