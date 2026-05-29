@@ -63,8 +63,59 @@ export const createProduct = async (req, res, next) => {
       stock,
       is_highlighted,
       category,
-      author
+      author,
+      isDiscount,
+      discountPercent
     } = req.body;
+
+    // เช็กเฉพาะ field ที่จำเป็นจริง ๆ สำหรับการสร้างสินค้าใหม่
+    // field ที่เป็น number หรือ boolean ควรเช็กด้วย === undefined
+    // เพื่อไม่ให้ค่า 0 หรือ false ถูกมองว่าเป็นค่าว่าง
+    if (
+      !book_name ||
+      !title ||
+      !isbn ||
+      price === undefined ||
+      rating === undefined ||
+      !img_link ||
+      page === undefined ||
+      !language ||
+      !publisher ||
+      stock === undefined ||
+      is_highlighted === undefined ||
+      !category ||
+      !author
+    ) {
+      const err = new Error(
+        'All book information must be provided completely.'
+      );
+      err.name = 'ValidationError';
+      err.status = 400;
+      return next(err);
+    }
+
+    // ถ้าบอกว่าสินค้าลดราคา ต้องมีเปอร์เซ็นต์ส่วนลดมากกว่า 0
+    if (
+      isDiscount === true &&
+      (discountPercent === undefined || discountPercent <= 0)
+    ) {
+      const err = new Error(
+        'discountPercent must be more than 0 when isDiscount is true.'
+      );
+      err.name = 'ValidationError';
+      err.status = 400;
+      return next(err);
+    }
+
+    // ถ้าบอกว่าสินค้าไม่ได้ลดราคา ไม่ควรส่งเปอร์เซ็นต์ส่วนลดที่มากกว่า 0 มา
+    if (isDiscount === false && discountPercent > 0) {
+      const err = new Error(
+        'discountPercent should be 0 when isDiscount is false.'
+      );
+      err.name = 'ValidationError';
+      err.status = 400;
+      return next(err);
+    }
 
     // สร้าง product ใหม่ในฐานข้อมูล
     const product = await Product.create({
@@ -80,7 +131,9 @@ export const createProduct = async (req, res, next) => {
       stock,
       is_highlighted,
       category,
-      author
+      author,
+      isDiscount,
+      discountPercent
     });
 
     // ส่งข้อมูลที่สร้างสำเร็จกลับไป ใช้ status 201 เพราะเป็นการ create
@@ -99,6 +152,30 @@ export const updateProduct = async (req, res, next) => {
   try {
     // ดึง id จาก params
     const { id } = req.params;
+
+    // ดึง field ส่วนลดออกมาเพื่อเช็กความสัมพันธ์ของข้อมูล
+    const { isDiscount, discountPercent } = req.body;
+
+    // ถ้าผู้ใช้เปิดสถานะลดราคา ต้องส่งเปอร์เซ็นต์ลดมาด้วย
+    if (
+      isDiscount === true &&
+      (discountPercent === undefined || discountPercent <= 0)
+    ) {
+      const err = new Error(
+        'discountPercent must be more than 0 when isDiscount is true.'
+      );
+      err.status = 400;
+      return next(err);
+    }
+
+    // ถ้าผู้ใช้ปิดสถานะลดราคา แต่ยังใส่เปอร์เซ็นต์ลดอยู่ ข้อมูลจะขัดกัน
+    if (isDiscount === false && discountPercent > 0) {
+      const err = new Error(
+        'discountPercent should be 0 when isDiscount is false.'
+      );
+      err.status = 400;
+      return next(err);
+    }
 
     // ใช้ findByIdAndUpdate เพื่อแก้ไขข้อมูลตาม id
     const product = await Product.findByIdAndUpdate(id, req.body, {
