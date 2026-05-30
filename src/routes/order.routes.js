@@ -16,12 +16,12 @@ export const router = Router();
 
 //##use controller
 
-// User
-router.post('/', authUser, createOrder);
-router.get('/me', authUser, getMyOrders);
+router.get('/', authUser, authorizeAdmin, getOrders);
 
-// Admin
-router.get('/', authUser, authorizeAdmin, getAllOrders);
-router.get('/:id', authUser, authorizeAdmin, getOrderById);
-router.patch('/:id', authUser, authorizeAdmin, updateOrderStatus);
+router.get('/:user_id', authUser, getUserOrders);
+
+router.post('/', authUser, createOrder);
+
+router.patch('/:id', authUser, authorizeAdmin, updateOrder);
+
 router.delete('/:id', authUser, authorizeAdmin, deleteOrder);
