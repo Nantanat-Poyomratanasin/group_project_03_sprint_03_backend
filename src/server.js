@@ -11,7 +11,7 @@ const corsOptions = {
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:5175',
-    'https://group-project-03-sprint-02-seven.vercel.app/'
+    'https://vercel.com/nantanat-poyomratanasins-projects/group-project-03-sprint-02/EPSZHEJh8b2aTSUXechXtBQeqEUa'
   ], // frontend domain
   credentials: true // ✅ allow cookies to be sent
 };
